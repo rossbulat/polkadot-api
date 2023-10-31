@@ -3,6 +3,10 @@ import { getComponentBuilder } from "./component-builder"
 import RawMetadata from "./polkadot-metadata.json"
 import { getDynamicBuilder } from "./dynamic-builder"
 
+/**
+ * Run with:
+ * pnpm --filter @polkadot-api/substrate-codegen exec vitest
+ */
 describe("component-builder", () => {
   const componentBuilder = getComponentBuilder(RawMetadata.metadata.value)
   describe("primitives", () => {
