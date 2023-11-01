@@ -351,6 +351,9 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
     devDependencies:
+      '@polkadot-api/substrate-codegen':
+        specifier: workspace:*
+        version: link:../substrate-codegen
       '@storybook/addon-essentials':
         specifier: ^7.5.2
         version: 7.5.2(@types/react-dom@18.2.8)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
