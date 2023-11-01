@@ -3,32 +3,34 @@ import { Hex, bool, char, fixedStr } from "@polkadot-api/substrate-bindings"
 import { describe, it } from "vitest"
 import {
   AccountIdComponent,
-  AccountIdDecoded,
   ArrayComponent,
-  ArrayDecoded,
   BigNumberComponent,
+  BoolComponent,
+  BytesComponent,
+  EnumComponent,
+  NumberComponent,
+  SequenceComponent,
+  StringComponent,
+  StructComponent,
+  TupleComponent,
+} from "./view-builder-components"
+import {
+  AccountIdDecoded,
+  ArrayDecoded,
   BigNumberDecoded,
   BitSequenceDecoded,
-  BoolComponent,
   BoolDecoded,
-  BytesComponent,
   BytesDecoded,
   Decoded,
-  EnumComponent,
   EnumDecoded,
-  NumberComponent,
   NumberDecoded,
-  SequenceComponent,
   SequenceDecoded,
   Shape,
-  StringComponent,
   StringDecoded,
-  StructComponent,
   StructDecoded,
-  TupleComponent,
   TupleDecoded,
   VoidDecoded,
-} from "./view-builder-components"
+} from "./view-builder"
 
 const MockDecoded = {
   // Primitives
