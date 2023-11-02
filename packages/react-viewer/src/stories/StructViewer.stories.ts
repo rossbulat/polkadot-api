@@ -1,17 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { StructView } from "../components/StructView"
+import { StructViewer } from "../components/StructViewer"
 import mockDecoded from "./helpers/mockDecoded"
 
 const meta = {
-  title: "Complex/StructView",
-  component: StructView,
+  title: "Complex/StructViewer",
+  component: StructViewer,
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
   argTypes: {},
-} satisfies Meta<typeof StructView>
+} satisfies Meta<typeof StructViewer>
 
 export default meta
 type Story = StoryObj<typeof meta>

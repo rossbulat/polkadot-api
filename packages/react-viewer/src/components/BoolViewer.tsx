@@ -1,9 +1,9 @@
 import { BoolDecoded } from "@polkadot-api/substrate-codegen"
 
-interface BoolViewProps {
+interface BoolViewerProps {
   decoded: BoolDecoded
 }
 
-export const BoolView: React.FC<BoolViewProps> = ({ decoded }) => {
+export const BoolViewer: React.FC<BoolViewerProps> = ({ decoded }) => {
   return <div>{JSON.stringify(decoded.value)}</div>
 }

@@ -1,9 +1,9 @@
 import { BigNumberDecoded } from "@polkadot-api/substrate-codegen"
 
-interface BigNumberViewProps {
+interface BigNumberViewerProps {
   decoded: BigNumberDecoded
 }
 
-export const BigNumberView: React.FC<BigNumberViewProps> = () => {
+export const BigNumberViewer: React.FC<BigNumberViewerProps> = () => {
   return <div>TBD</div>
 }

@@ -1,11 +1,11 @@
 import { SequenceDecoded } from "@polkadot-api/substrate-codegen"
-import { DecodedView } from "./DecodedView"
+import { DecodedViewer } from "./DecodedViewer"
 
-interface SequenceViewProps {
+interface SequenceViewerProps {
   decoded: SequenceDecoded
 }
 
-export const SequenceView: React.FC<SequenceViewProps> = ({ decoded }) => {
+export const SequenceViewer: React.FC<SequenceViewerProps> = ({ decoded }) => {
   return (
     <div
       style={{
@@ -16,7 +16,7 @@ export const SequenceView: React.FC<SequenceViewProps> = ({ decoded }) => {
       <div>Sequence [</div>
       <div style={{ paddingLeft: "1rem" }}>
         {decoded.value.map((v) => (
-          <DecodedView decoded={v} />
+          <DecodedViewer decoded={v} />
         ))}
       </div>
 

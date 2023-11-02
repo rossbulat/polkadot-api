@@ -1,19 +1,19 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { CallView } from "../components/CallView"
+import { CallDecodedViewer } from "../components/CallDecodedViewer"
 
 import { getViewBuilder } from "@polkadot-api/substrate-codegen"
 import rawMetadata from "./polkadot.json"
 const { callDecoder } = getViewBuilder(rawMetadata.metadata.value)
 
 const meta = {
-  title: "Components/CallView",
-  component: CallView,
+  title: "Components/CallDecodedViewer",
+  component: CallDecodedViewer,
   parameters: {
     layout: "centered",
   },
   argTypes: {},
-} satisfies Meta<typeof CallView>
+} satisfies Meta<typeof CallDecodedViewer>
 
 export default meta
 type Story = StoryObj<typeof meta>

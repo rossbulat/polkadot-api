@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { BigNumberView } from "../components/BigNumberView"
+import { BigNumberViewer } from "../components/BigNumberViewer"
 import mockDecoded from "./helpers/mockDecoded"
 
 const meta = {
-  title: "Primitives/BigNumberView",
-  component: BigNumberView,
+  title: "Primitives/BigNumberViewer",
+  component: BigNumberViewer,
   parameters: {
     layout: "centered",
   },
   argTypes: {},
-} satisfies Meta<typeof BigNumberView>
+} satisfies Meta<typeof BigNumberViewer>
 
 export default meta
 type Story = StoryObj<typeof meta>

@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { EnumView } from "../components/EnumView"
+import { EnumViewer } from "../components/EnumViewer"
 import mockDecoded from "./helpers/mockDecoded"
 
 const meta = {
-  title: "Primitives/EnumView",
-  component: EnumView,
+  title: "Primitives/EnumViewer",
+  component: EnumViewer,
   parameters: {
     layout: "centered",
   },
   argTypes: {},
-} satisfies Meta<typeof EnumView>
+} satisfies Meta<typeof EnumViewer>
 
 export default meta
 type Story = StoryObj<typeof meta>

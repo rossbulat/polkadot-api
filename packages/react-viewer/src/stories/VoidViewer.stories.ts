@@ -1,22 +1,22 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { NumberView } from "../components/NumberView"
+import { VoidViewer } from "../components/VoidViewer"
 import mockDecoded from "./helpers/mockDecoded"
 
 const meta = {
-  title: "Primitives/NumberView",
-  component: NumberView,
+  title: "Primitives/VoidViewer",
+  component: VoidViewer,
   parameters: {
     layout: "centered",
   },
   argTypes: {},
-} satisfies Meta<typeof NumberView>
+} satisfies Meta<typeof VoidViewer>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    decoded: mockDecoded.int(42),
+    decoded: mockDecoded.void(),
   },
 }

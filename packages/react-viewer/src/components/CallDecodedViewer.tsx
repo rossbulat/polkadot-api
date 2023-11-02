@@ -1,11 +1,11 @@
 import { Decoded, DecodedCall } from "@polkadot-api/substrate-codegen"
-import { DecodedView } from "./DecodedView"
+import { DecodedViewer } from "./DecodedViewer"
 
-interface CallViewProps {
+interface CallViewerProps {
   decoded: DecodedCall
 }
 
-export const CallView: React.FC<CallViewProps> = ({ decoded }) => {
+export const CallDecodedViewer: React.FC<CallViewerProps> = ({ decoded }) => {
   const argStrings = Object.entries(decoded.args.value).map(
     ([key, value]: [string, Decoded]) => {
       return `${key}: ${value.codec}`
@@ -25,7 +25,7 @@ export const CallView: React.FC<CallViewProps> = ({ decoded }) => {
           }(${argStrings.join(", ")})`}
         </b>
       </div>
-      <DecodedView decoded={decoded.args} />
+      <DecodedViewer decoded={decoded.args} />
     </div>
   )
 }

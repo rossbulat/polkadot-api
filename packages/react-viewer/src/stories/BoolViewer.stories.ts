@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { BoolView } from "../components/BoolView"
+import { BoolViewer } from "../components/BoolViewer"
 import mockDecoded from "./helpers/mockDecoded"
 
 const meta = {
-  title: "Primitives/BoolView",
-  component: BoolView,
+  title: "Primitives/BoolViewer",
+  component: BoolViewer,
   parameters: {
     layout: "centered",
   },
   argTypes: {},
-} satisfies Meta<typeof BoolView>
+} satisfies Meta<typeof BoolViewer>
 
 export default meta
 type Story = StoryObj<typeof meta>

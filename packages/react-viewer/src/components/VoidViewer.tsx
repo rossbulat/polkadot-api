@@ -1,9 +1,9 @@
 import { VoidDecoded } from "@polkadot-api/substrate-codegen"
 
-interface VoidViewProps {
+interface VoidViewerProps {
   decoded: VoidDecoded
 }
 
-export const VoidView: React.FC<VoidViewProps> = () => {
+export const VoidViewer: React.FC<VoidViewerProps> = () => {
   return null
 }
