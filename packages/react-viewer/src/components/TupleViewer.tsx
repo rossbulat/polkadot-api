@@ -1,11 +1,11 @@
 import { TupleDecoded } from "@polkadot-api/substrate-codegen"
-import { DecodedView } from "./DecodedView"
+import { DecodedViewer } from "./DecodedViewer"
 
-interface TupleViewProps {
+interface TupleViewerProps {
   decoded: TupleDecoded
 }
 
-export const TupleView: React.FC<TupleViewProps> = ({ decoded }) => {
+export const TupleViewer: React.FC<TupleViewerProps> = ({ decoded }) => {
   return (
     <div
       style={{
@@ -16,7 +16,7 @@ export const TupleView: React.FC<TupleViewProps> = ({ decoded }) => {
       <div>Tuple [</div>
       <div style={{ paddingLeft: "1rem" }}>
         {decoded.value.map((v) => (
-          <DecodedView decoded={v} />
+          <DecodedViewer decoded={v} />
         ))}
       </div>
       <div>]</div>

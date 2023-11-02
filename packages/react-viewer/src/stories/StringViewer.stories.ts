@@ -1,22 +1,22 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { SequenceView } from "../components/SequenceView"
+import { StringViewer } from "../components/StringViewer"
 import mockDecoded from "./helpers/mockDecoded"
 
 const meta = {
-  title: "Complex/SequenceView",
-  component: SequenceView,
+  title: "Primitives/StringViewer",
+  component: StringViewer,
   parameters: {
     layout: "centered",
   },
   argTypes: {},
-} satisfies Meta<typeof SequenceView>
+} satisfies Meta<typeof StringViewer>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    decoded: mockDecoded.sequence([true, false].map(mockDecoded.bool)),
+    decoded: mockDecoded.str("Hello, world!"),
   },
 }

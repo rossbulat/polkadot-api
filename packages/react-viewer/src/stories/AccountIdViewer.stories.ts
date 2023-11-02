@@ -1,17 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { AccountIdView } from "../components/AccountIdView"
+import { AccountIdViewer } from "../components/AccountIdViewer"
 import mockDecoded from "./helpers/mockDecoded"
 import { SS58String } from "@polkadot-api/substrate-bindings"
 
 const meta = {
-  title: "Primitives/AccountIdView",
-  component: AccountIdView,
+  title: "Primitives/AccountIdViewer",
+  component: AccountIdViewer,
   parameters: {
     layout: "centered",
   },
   argTypes: {},
-} satisfies Meta<typeof AccountIdView>
+} satisfies Meta<typeof AccountIdViewer>
 
 export default meta
 type Story = StoryObj<typeof meta>

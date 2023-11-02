@@ -1,11 +1,11 @@
 import { Decoded, EnumDecoded } from "@polkadot-api/substrate-codegen"
-import { DecodedView } from "./DecodedView"
+import { DecodedViewer } from "./DecodedViewer"
 
-interface EnumViewProps {
+interface EnumViewerProps {
   decoded: EnumDecoded
 }
 
-export const EnumView: React.FC<EnumViewProps> = ({ decoded }) => {
+export const EnumViewer: React.FC<EnumViewerProps> = ({ decoded }) => {
   return (
     <div
       style={{
@@ -21,7 +21,7 @@ export const EnumView: React.FC<EnumViewProps> = ({ decoded }) => {
       >
         <div>{`${decoded.value.tag}:`}</div>
         <div style={{ paddingLeft: "1rem" }}>
-          <DecodedView decoded={decoded.value.value as Decoded} />
+          <DecodedViewer decoded={decoded.value.value as Decoded} />
         </div>
       </div>
     </div>

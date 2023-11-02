@@ -1,11 +1,11 @@
 import { Decoded, StructDecoded } from "@polkadot-api/substrate-codegen"
-import { DecodedView } from "./DecodedView"
+import { DecodedViewer } from "./DecodedViewer"
 
-interface StructViewProps {
+interface StructViewerProps {
   decoded: StructDecoded
 }
 
-export const StructView: React.FC<StructViewProps> = ({ decoded }) => {
+export const StructViewer: React.FC<StructViewerProps> = ({ decoded }) => {
   return (
     <div
       style={{
@@ -22,7 +22,7 @@ export const StructView: React.FC<StructViewProps> = ({ decoded }) => {
         >
           <div>{`${key}:`}</div>
           <div style={{ paddingLeft: "1rem" }}>
-            <DecodedView decoded={value as Decoded} />
+            <DecodedViewer decoded={value as Decoded} />
           </div>
         </div>
       ))}

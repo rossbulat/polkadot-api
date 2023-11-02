@@ -1,22 +1,25 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { StringView } from "../components/StringView"
+import { TupleViewer } from "../components/TupleViewer"
 import mockDecoded from "./helpers/mockDecoded"
 
 const meta = {
-  title: "Primitives/StringView",
-  component: StringView,
+  title: "Complex/TupleViewer",
+  component: TupleViewer,
   parameters: {
     layout: "centered",
   },
   argTypes: {},
-} satisfies Meta<typeof StringView>
+} satisfies Meta<typeof TupleViewer>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    decoded: mockDecoded.str("Hello, world!"),
+    decoded: mockDecoded.tuple([
+      mockDecoded.bool(true),
+      mockDecoded.str("Hello World"),
+    ]),
   },
 }

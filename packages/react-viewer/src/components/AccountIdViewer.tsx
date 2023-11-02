@@ -1,9 +1,11 @@
 import { AccountIdDecoded } from "@polkadot-api/substrate-codegen"
 
-interface AccountIdViewProps {
+interface AccountIdViewerProps {
   decoded: AccountIdDecoded
 }
 
-export const AccountIdView: React.FC<AccountIdViewProps> = ({ decoded }) => {
+export const AccountIdViewer: React.FC<AccountIdViewerProps> = ({
+  decoded,
+}) => {
   return <div>{JSON.stringify(decoded.value.address)}</div>
 }
