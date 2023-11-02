@@ -20,7 +20,7 @@ import {
   bitSequence,
   Codec,
   Decoder,
-  Bytes,
+  Hex,
   AccountId,
   Vector,
   HexString,
@@ -38,7 +38,8 @@ import {
   BigNumberDecoded,
   BitSequenceDecoded,
   BoolDecoded,
-  BytesDecoded,
+  BytesArrayDecoded,
+  BytesSequenceDecoded,
   EnumDecoded,
   EnumShape,
   NumberDecoded,
@@ -55,28 +56,42 @@ import {
 
 const toHex = _toHex as (input: Uint8Array) => HexString
 
+type WithoutPath<T extends { path: string[] }> = Omit<T, "path">
 type PrimitiveCodec = PrimitiveDecoded["codec"]
-export type WithShape<T extends PrimitiveDecoded> = Decoder<T> & {
+export type WithShapeWithoutPath<T extends PrimitiveDecoded> = Decoder<
+  WithoutPath<T>
+> & {
   shape: { codec: T["codec"] }
 }
 
 type PrimitiveShapeDecoder =
-  | WithShape<VoidDecoded>
-  | WithShape<BoolDecoded>
-  | WithShape<StringDecoded>
-  | WithShape<NumberDecoded>
-  | WithShape<StringDecoded>
-  | WithShape<NumberDecoded>
-  | WithShape<BigNumberDecoded>
-  | WithShape<BitSequenceDecoded>
-  | WithShape<AccountIdDecoded>
-  | WithShape<BytesDecoded>
+  | WithShapeWithoutPath<VoidDecoded>
+  | WithShapeWithoutPath<BoolDecoded>
+  | WithShapeWithoutPath<StringDecoded>
+  | WithShapeWithoutPath<NumberDecoded>
+  | WithShapeWithoutPath<StringDecoded>
+  | WithShapeWithoutPath<NumberDecoded>
+  | WithShapeWithoutPath<BigNumberDecoded>
+  | WithShapeWithoutPath<BitSequenceDecoded>
+  | WithShapeWithoutPath<AccountIdDecoded>
+  | WithShapeWithoutPath<BytesSequenceDecoded>
+  | WithShapeWithoutPath<BytesArrayDecoded>
 
-type SequenceShapedDecoder = Decoder<SequenceDecoded> & { shape: SequenceShape }
-type ArrayShapedDecoder = Decoder<ArrayDecoded> & { shape: ArrayShape }
-type TupleShapedDecoder = Decoder<TupleDecoded> & { shape: TupleShape }
-type StructShapedDecoder = Decoder<StructDecoded> & { shape: StructShape }
-type EnumShapedDecoder = Decoder<EnumDecoded> & { shape: EnumShape }
+type SequenceShapedDecoder = Decoder<WithoutPath<SequenceDecoded>> & {
+  shape: SequenceShape
+}
+type ArrayShapedDecoder = Decoder<WithoutPath<ArrayDecoded>> & {
+  shape: ArrayShape
+}
+type TupleShapedDecoder = Decoder<WithoutPath<TupleDecoded>> & {
+  shape: TupleShape
+}
+type StructShapedDecoder = Decoder<WithoutPath<StructDecoded>> & {
+  shape: StructShape
+}
+type EnumShapedDecoder = Decoder<WithoutPath<EnumDecoded>> & {
+  shape: EnumShape
+}
 type ComplexShapedDecoder =
   | SequenceShapedDecoder
   | ArrayShapedDecoder
@@ -115,7 +130,7 @@ export const AccountIdShaped = (ss58Prefix = 42) => {
   const { dec } = AccountId(ss58Prefix)
   const codec = "AccountId" as const
 
-  const shapedDecoder: Decoder<AccountIdDecoded> = createDecoder(
+  const shapedDecoder: Decoder<WithoutPath<AccountIdDecoded>> = createDecoder(
     (bytes, tHex) => ({
       value: { address: dec(bytes), ss58Prefix },
       input: tHex(),
@@ -123,9 +138,35 @@ export const AccountIdShaped = (ss58Prefix = 42) => {
     }),
   )
 
-  const result: WithShape<AccountIdDecoded> = Object.assign(shapedDecoder, {
-    shape: { codec },
-  })
+  const result: WithShapeWithoutPath<AccountIdDecoded> = Object.assign(
+    shapedDecoder,
+    {
+      shape: { codec },
+    },
+  )
+
+  return result
+}
+
+export const BytesArray = (len: number) => {
+  const { dec } = Hex(len)
+  const codec = "BytesArray" as const
+
+  const shapedDecoder: Decoder<WithoutPath<BytesArrayDecoded>> = createDecoder(
+    (bytes, tHex) => ({
+      value: dec(bytes),
+      input: tHex(),
+      len,
+      codec,
+    }),
+  )
+
+  const result: WithShapeWithoutPath<BytesArrayDecoded> = Object.assign(
+    shapedDecoder,
+    {
+      shape: { codec },
+    },
+  )
 
   return result
 }
@@ -150,7 +191,7 @@ const _primitives = {
   i256,
   compactBn,
   bitSequence,
-  Bytes: Bytes(),
+  Bytes: Hex(),
   AccountId: AccountIdShaped(),
 }
 
