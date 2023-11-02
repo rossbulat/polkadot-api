@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { HexString } from "@polkadot-api/substrate-bindings"
 import { BoolViewer } from "../components/BoolViewer"
+import { HexString } from "@polkadot-api/substrate-codegen"
 
 const meta = {
   title: "Primitives/BoolViewer",
