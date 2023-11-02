@@ -12,59 +12,53 @@ export type GetViewBuilder = (metadata: V14) => {
     shape: Shape
     decoder: Decoder<Decoded>
   }
-  callDecoder: Decoder<DecodedCall>
-}
-
-export interface DecodedCall {
-  pallet: {
-    value: {
-      name: string
-      idx: number
+  callDecoder: Decoder<{
+    pallet: {
+      value: {
+        name: string
+        idx: number
+      }
+      input: HexString
     }
-    input: HexString
-  }
-  call: {
-    value: {
-      name: string
-      idx: number
+    call: {
+      value: {
+        name: string
+        idx: number
+      }
+      input: HexString
     }
-    input: HexString
-    docs: string[]
-  }
-  args: { value: StructDecoded; shape: Shape }
+    args: StructDecoded
+  }>
 }
 
-type WithInputAndPath<T> = T & {
-  input: HexString
-  path?: string[]
-}
+type WithInput<T> = T & { input: HexString }
 
-export type VoidDecoded = WithInputAndPath<{
+export type VoidDecoded = WithInput<{
   codec: "_void"
   value: undefined
 }>
 
-export type BoolDecoded = WithInputAndPath<{
+export type BoolDecoded = WithInput<{
   codec: "bool"
   value: boolean
 }>
 
-export type StringDecoded = WithInputAndPath<{
+export type StringDecoded = WithInput<{
   codec: "str" | "char"
   value: string
 }>
 
-export type NumberDecoded = WithInputAndPath<{
+export type NumberDecoded = WithInput<{
   codec: "u8" | "u16" | "u32" | "i8" | "i16" | "i32" | "compactNumber"
   value: number
 }>
 
-export type BigNumberDecoded = WithInputAndPath<{
+export type BigNumberDecoded = WithInput<{
   codec: "u64" | "u128" | "u256" | "i64" | "i128" | "i256" | "compactBn"
   value: bigint
 }>
 
-export type BitSequenceDecoded = WithInputAndPath<{
+export type BitSequenceDecoded = WithInput<{
   codec: "bitSequence"
   value: {
     bitsLen: number
@@ -72,18 +66,12 @@ export type BitSequenceDecoded = WithInputAndPath<{
   }
 }>
 
-export type BytesSequenceDecoded = WithInputAndPath<{
+export type BytesDecoded = WithInput<{
   codec: "Bytes"
-  value: HexString
+  value: Uint8Array
 }>
 
-export type BytesArrayDecoded = WithInputAndPath<{
-  codec: "BytesArray"
-  value: HexString
-  len: number
-}>
-
-export type AccountIdDecoded = WithInputAndPath<{
+export type AccountIdDecoded = WithInput<{
   codec: "AccountId"
   value: {
     ss58Prefix: number
@@ -98,49 +86,8 @@ export type PrimitiveDecoded =
   | NumberDecoded
   | BigNumberDecoded
   | BitSequenceDecoded
-  | BytesSequenceDecoded
-  | BytesArrayDecoded
+  | BytesDecoded
   | AccountIdDecoded
-
-export type SequenceDecoded = WithInputAndPath<{
-  codec: "Sequence"
-  value: Array<Decoded>
-}>
-
-export type ArrayDecoded = WithInputAndPath<{
-  codec: "Array"
-  value: Array<Decoded>
-}>
-
-export type TupleDecoded = WithInputAndPath<{
-  codec: "Tuple"
-  value: Array<Decoded>
-  innerDocs: Array<string[]>
-}>
-
-export type StructDecoded = WithInputAndPath<{
-  codec: "Struct"
-  value: StringRecord<Decoded>
-  innerDocs: StringRecord<string[]>
-}>
-
-export type EnumDecoded = WithInputAndPath<{
-  codec: "Enum"
-  value: {
-    tag: string
-    value: Decoded
-  }
-  docs: string[]
-}>
-
-export type ComplexDecoded =
-  | SequenceDecoded
-  | ArrayDecoded
-  | TupleDecoded
-  | StructDecoded
-  | EnumDecoded
-
-export type Decoded = PrimitiveDecoded | ComplexDecoded
 
 export interface SequenceShape {
   codec: "Sequence"
@@ -176,3 +123,35 @@ export type ComplexShape =
   | EnumShape
 
 export type Shape = { codec: PrimitiveDecoded["codec"] } | ComplexShape
+
+export interface SequenceDecoded extends WithInput<SequenceShape> {
+  value: Array<Decoded>
+}
+
+export interface ArrayDecoded extends WithInput<ArrayShape> {
+  value: Array<Decoded>
+}
+
+export interface TupleDecoded extends WithInput<TupleShape> {
+  value: Array<Decoded>
+}
+
+export interface StructDecoded extends WithInput<StructShape> {
+  value: StringRecord<Decoded>
+}
+
+export interface EnumDecoded extends WithInput<EnumShape> {
+  value: {
+    tag: string
+    value: Decoded
+  }
+}
+
+export type ComplexDecoded =
+  | SequenceDecoded
+  | ArrayDecoded
+  | TupleDecoded
+  | StructDecoded
+  | EnumDecoded
+
+export type Decoded = PrimitiveDecoded | ComplexDecoded
