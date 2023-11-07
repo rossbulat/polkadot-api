@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react"
 
 import { CallDecodedViewer } from "../components/CallDecodedViewer"
 
-import { getViewBuilder } from "@polkadot-api/substrate-codegen"
+import { V14, getViewBuilder } from "@polkadot-api/substrate-codegen"
 import rawMetadata from "./polkadot.json"
-const { callDecoder } = getViewBuilder(rawMetadata.metadata.value)
+const { callDecoder } = getViewBuilder(rawMetadata.metadata.value as V14)
 
 const meta = {
   title: "Components/CallDecodedViewer",
