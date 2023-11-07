@@ -6,16 +6,13 @@ import { AccountIdViewer } from "./AccountIdViewer"
 import { ArrayViewer } from "./ArrayViewer"
 import { SequenceViewer } from "./SequenceViewer"
 import { TupleViewer } from "./TupleViewer"
-import { StringViewer } from "./StringViewer"
+import { StrViewer } from "./StrViewer"
 import { NumberViewer } from "./NumberViewer"
 import { BigNumberViewer } from "./BigNumberViewer"
 import { EnumViewer } from "./EnumViewer"
+import { ViewerProps } from "./types"
 
-interface DecodedViewerProps {
-  decoded: Decoded
-}
-
-export const DecodedViewer: React.FC<DecodedViewerProps> = ({ decoded }) => {
+export const DecodedViewer: React.FC<ViewerProps<Decoded>> = ({ decoded }) => {
   switch (decoded.codec) {
     case "_void":
       return null
@@ -25,7 +22,7 @@ export const DecodedViewer: React.FC<DecodedViewerProps> = ({ decoded }) => {
 
     case "str":
     case "char":
-      return <StringViewer decoded={decoded} />
+      return <StrViewer decoded={decoded} />
 
     case "u8":
     case "u16":

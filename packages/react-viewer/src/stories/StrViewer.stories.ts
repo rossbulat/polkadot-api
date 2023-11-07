@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { StringViewer } from "../components/StringViewer"
+import { StrViewer } from "../components/StrViewer"
 import mockDecoded from "./helpers/mockDecoded"
 
 const meta = {
-  title: "Primitives/StringViewer",
-  component: StringViewer,
+  title: "Primitives/StrViewer",
+  component: StrViewer,
   parameters: {
     layout: "centered",
   },
   argTypes: {},
-} satisfies Meta<typeof StringViewer>
+} satisfies Meta<typeof StrViewer>
 
 export default meta
 type Story = StoryObj<typeof meta>
