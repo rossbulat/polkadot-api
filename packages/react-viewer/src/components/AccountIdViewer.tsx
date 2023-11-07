@@ -1,8 +1,7 @@
 import { AccountIdDecoded } from "@polkadot-api/substrate-codegen"
+import { ViewerProps } from "./types"
 
-interface AccountIdViewerProps {
-  decoded: AccountIdDecoded
-}
+type AccountIdViewerProps = ViewerProps<AccountIdDecoded>
 
 export const AccountIdViewer: React.FC<AccountIdViewerProps> = ({
   decoded,
