@@ -1,14 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
 import { VoidViewer } from "../components/VoidViewer"
-import mockDecoded from "./helpers/mockDecoded"
+import mockDecoded from "../helpers/mockDecoded"
 
 const meta = {
   title: "Primitives/VoidViewer",
   component: VoidViewer,
-  parameters: {
-    layout: "centered",
-  },
+  parameters: {},
   argTypes: {},
 } satisfies Meta<typeof VoidViewer>
 

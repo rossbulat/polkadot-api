@@ -1,14 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
 import { NumberViewer } from "../components/NumberViewer"
-import mockDecoded from "./helpers/mockDecoded"
+import mockDecoded from "../helpers/mockDecoded"
 
 const meta = {
   title: "Primitives/NumberViewer",
   component: NumberViewer,
-  parameters: {
-    layout: "centered",
-  },
+  parameters: {},
   argTypes: {},
 } satisfies Meta<typeof NumberViewer>
 

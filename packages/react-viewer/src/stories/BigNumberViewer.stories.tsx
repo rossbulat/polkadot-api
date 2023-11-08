@@ -6,9 +6,7 @@ import mockDecoded from "../helpers/mockDecoded"
 const meta = {
   title: "Primitives/BigNumberViewer",
   component: BigNumberViewer,
-  parameters: {
-    layout: "centered",
-  },
+  parameters: {},
 } satisfies Meta<typeof BigNumberViewer>
 
 export default meta

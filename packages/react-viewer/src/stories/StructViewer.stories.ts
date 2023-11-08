@@ -1,14 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
 import { StructViewer } from "../components/StructViewer"
-import mockDecoded from "./helpers/mockDecoded"
+import mockDecoded from "../helpers/mockDecoded"
 
 const meta = {
   title: "Complex/StructViewer",
   component: StructViewer,
-  parameters: {
-    layout: "centered",
-  },
+  parameters: {},
   argTypes: {},
 } satisfies Meta<typeof StructViewer>
 
@@ -18,11 +16,22 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     decoded: mockDecoded.struct({
-      foo: mockDecoded.bool(true),
-      bar: mockDecoded.bool(false),
+      foo: mockDecoded.struct({
+        isFez: mockDecoded.bool(false),
+        name: mockDecoded.str("foo"),
+      }),
+      bar: mockDecoded.struct({
+        isFez: mockDecoded.bool(false),
+        name: mockDecoded.str("bar"),
+      }),
       fez: mockDecoded.struct({
-        boolean: mockDecoded.bool(true),
-        string: mockDecoded.bool(false),
+        isFez: mockDecoded.bool(true),
+        name: mockDecoded.str("fez"),
+        address: mockDecoded.struct({
+          street: mockDecoded.str("1234 Main St."),
+          city: mockDecoded.str("Anytown"),
+          state: mockDecoded.str("CA"),
+        }),
       }),
     }),
   },
