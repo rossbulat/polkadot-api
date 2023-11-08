@@ -1,9 +1,8 @@
 import { NumberDecoded } from "@polkadot-api/substrate-codegen"
+import { ViewerProps } from "./types"
 
-interface NumberViewerProps {
-  decoded: NumberDecoded
-}
-
-export const NumberViewer: React.FC<NumberViewerProps> = ({ decoded }) => {
+export const NumberViewer: React.FC<ViewerProps<NumberDecoded>> = ({
+  decoded,
+}) => {
   return <div>{JSON.stringify(decoded.value)}</div>
 }

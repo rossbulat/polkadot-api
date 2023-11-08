@@ -1,25 +1,20 @@
 import { TupleDecoded } from "@polkadot-api/substrate-codegen"
-import { DecodedViewer } from "./DecodedViewer"
+import { InternalDecodedViewer } from "../DecodedViewer"
+import { ViewerProps } from "./types"
+import { getTypeLabelForDecoded } from "../helpers"
 
-interface TupleViewerProps {
-  decoded: TupleDecoded
-}
-
-export const TupleViewer: React.FC<TupleViewerProps> = ({ decoded }) => {
+export const TupleViewer: React.FC<ViewerProps<TupleDecoded>> = ({
+  decoded,
+}) => {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <div>Tuple [</div>
-      <div style={{ paddingLeft: "1rem" }}>
-        {decoded.value.map((v) => (
-          <DecodedViewer decoded={v} />
-        ))}
+    <div>
+      <div>
+        <i className="text-slate-400">{getTypeLabelForDecoded(decoded)}</i>
       </div>
-      <div>]</div>
+
+      {decoded.value.map((v, index) => (
+        <InternalDecodedViewer key={"tuple_" + index} decoded={v} />
+      ))}
     </div>
   )
 }

@@ -1,11 +1,10 @@
 import { SequenceDecoded } from "@polkadot-api/substrate-codegen"
-import { DecodedViewer } from "./DecodedViewer"
+import { InternalDecodedViewer } from "../DecodedViewer"
+import { ViewerProps } from "./types"
 
-interface SequenceViewerProps {
-  decoded: SequenceDecoded
-}
-
-export const SequenceViewer: React.FC<SequenceViewerProps> = ({ decoded }) => {
+export const SequenceViewer: React.FC<ViewerProps<SequenceDecoded>> = ({
+  decoded,
+}) => {
   return (
     <div
       style={{
@@ -13,14 +12,14 @@ export const SequenceViewer: React.FC<SequenceViewerProps> = ({ decoded }) => {
         flexDirection: "column",
       }}
     >
-      <div>Sequence [</div>
-      <div style={{ paddingLeft: "1rem" }}>
-        {decoded.value.map((v) => (
-          <DecodedViewer decoded={v} />
+      <div className="pl-1">
+        {decoded.value.map((v, index) => (
+          <div key={"sequence_" + index} className="flex flex-row align-top">
+            <div>{index + ": "}</div>
+            <InternalDecodedViewer decoded={v} />
+          </div>
         ))}
       </div>
-
-      <div>]</div>
     </div>
   )
 }
