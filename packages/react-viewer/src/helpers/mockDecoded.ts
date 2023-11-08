@@ -76,7 +76,7 @@ export const mockDecoded = {
     codec: BigNumberDecoded["codec"] = "u128",
   ): BigNumberDecoded => ({
     codec,
-    value: value,
+    value,
     input: scale.Hex(Infinity).dec(scale[codec].enc(value)),
     path: [],
   }),
