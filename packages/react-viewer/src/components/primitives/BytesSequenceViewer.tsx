@@ -1,5 +1,5 @@
 import { BytesSequenceDecoded } from "@polkadot-api/substrate-codegen"
-import { ViewerProps } from "./types"
+import { ViewerProps } from "../types"
 
 export const BytesSequenceViewer: React.FC<
   ViewerProps<BytesSequenceDecoded>

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { TupleViewer } from "../components/TupleViewer"
+import { TupleViewer } from "../components/complex/TupleViewer"
 import mockDecoded from "../helpers/mockDecoded"
 
 const flat = mockDecoded.tuple([

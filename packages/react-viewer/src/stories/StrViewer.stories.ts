@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { StrViewer } from "../components/StrViewer"
+import { StrViewer } from "../components/primitives/StrViewer"
 import mockDecoded from "../helpers/mockDecoded"
 
 const meta = {

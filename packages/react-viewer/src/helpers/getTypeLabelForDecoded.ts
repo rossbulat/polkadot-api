@@ -7,11 +7,14 @@ export const getTypeLabelForDecoded = (decoded: Decoded): string => {
     case "Array":
       return `[${decoded.shape.codec}; ${decoded.len}]`
     case "Sequence":
-      return `Vec<${decoded.shape.codec}>`
+      return `Vec<${getTypeLabelForDecoded(decoded.value[0])}>`
+    case "Enum":
+      return decoded.codec
     case "str":
       return "String"
     case "char":
       return "Char"
+
     default:
       return decoded.codec
   }

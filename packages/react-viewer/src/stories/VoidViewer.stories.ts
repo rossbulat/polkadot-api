@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { VoidViewer } from "../components/VoidViewer"
+import { VoidViewer } from "../components/primitives/VoidViewer"
 import mockDecoded from "../helpers/mockDecoded"
 
 const meta = {

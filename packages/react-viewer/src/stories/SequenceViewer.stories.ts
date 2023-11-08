@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { SequenceViewer } from "../components/SequenceViewer"
+import { SequenceViewer } from "../components/complex/SequenceViewer"
 import mockDecoded from "../helpers/mockDecoded"
 
 const meta = {

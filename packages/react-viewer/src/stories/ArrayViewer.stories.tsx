@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { ArrayViewer } from "../components/ArrayViewer"
+import { ArrayViewer } from "../components/complex/ArrayViewer"
 import mockDecoded from "../helpers/mockDecoded"
 
 const decoded = mockDecoded.array(

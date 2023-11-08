@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
 import { SS58String } from "@polkadot-api/substrate-bindings"
-import { AccountIdViewer } from "../components/AccountIdViewer"
+import { AccountIdViewer } from "../components/primitives/AccountIdViewer"
 import mockDecoded from "../helpers/mockDecoded"
 
 const decoded = mockDecoded.accountId(

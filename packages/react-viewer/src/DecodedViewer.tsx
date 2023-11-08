@@ -1,40 +1,32 @@
 import { Decoded } from "@polkadot-api/substrate-codegen"
 import React from "react"
-import { AccountIdViewer } from "./components/AccountIdViewer"
-import { ArrayViewer } from "./components/ArrayViewer"
-import { BigNumberViewer } from "./components/BigNumberViewer"
-import { BoolViewer } from "./components/BoolViewer"
-import { BytesSequenceViewer } from "./components/BytesSequenceViewer"
-import { EnumViewer } from "./components/EnumViewer"
-import { NumberViewer } from "./components/NumberViewer"
-import { SequenceViewer } from "./components/SequenceViewer"
-import { StrViewer } from "./components/StrViewer"
-import { StructViewer } from "./components/StructViewer"
-import { TupleViewer } from "./components/TupleViewer"
-import { VoidViewer } from "./components/VoidViewer"
+import { AccountIdViewer } from "./components/primitives/AccountIdViewer"
+import { ArrayViewer } from "./components/complex/ArrayViewer"
+import { BigNumberViewer } from "./components/primitives/BigNumberViewer"
+import { BoolViewer } from "./components/primitives/BoolViewer"
+import { BytesSequenceViewer } from "./components/primitives/BytesSequenceViewer"
+import { EnumViewer } from "./components/complex/EnumViewer"
+import { NumberViewer } from "./components/primitives/NumberViewer"
+import { SequenceViewer } from "./components/complex/SequenceViewer"
+import { StrViewer } from "./components/primitives/StrViewer"
+import { StructViewer } from "./components/complex/StructViewer"
+import { TupleViewer } from "./components/complex/TupleViewer"
+import { VoidViewer } from "./components/primitives/VoidViewer"
 import { ViewerProps } from "./components/types"
 
 export type DecodedViewerProps = { decoded: Decoded }
 
-export const DecodedViewer: React.FC<ViewerProps<Decoded>> = (props) => (
-  <LabeledInternalDecodedViewer {...props} level={0} />
-)
-
-type InternalDecodedViewerProps = DecodedViewerProps & { level?: number }
-
-export const InternalDecodedViewer: React.FC<InternalDecodedViewerProps> = ({
-  decoded,
-}) => {
-  switch (decoded.codec) {
+export const DecodedViewer: React.FC<ViewerProps<Decoded>> = (props) => {
+  switch (props.decoded.codec) {
     case "_void":
-      return <VoidViewer decoded={decoded} />
+      return <VoidViewer {...props} decoded={props.decoded} />
 
     case "bool":
-      return <BoolViewer decoded={decoded} />
+      return <BoolViewer {...props} decoded={props.decoded} />
 
     case "str":
     case "char":
-      return <StrViewer decoded={decoded} />
+      return <StrViewer {...props} decoded={props.decoded} />
 
     case "u8":
     case "u16":
@@ -43,7 +35,7 @@ export const InternalDecodedViewer: React.FC<InternalDecodedViewerProps> = ({
     case "i16":
     case "i32":
     case "compactNumber":
-      return <NumberViewer decoded={decoded} />
+      return <NumberViewer {...props} decoded={props.decoded} />
 
     case "u64":
     case "u128":
@@ -52,26 +44,24 @@ export const InternalDecodedViewer: React.FC<InternalDecodedViewerProps> = ({
     case "i128":
     case "i256":
     case "compactBn":
-      return <BigNumberViewer decoded={decoded} />
+      return <BigNumberViewer {...props} decoded={props.decoded} />
 
     case "Bytes":
-      return <BytesSequenceViewer decoded={decoded} />
+      return <BytesSequenceViewer {...props} decoded={props.decoded} />
     case "AccountId":
-      return <AccountIdViewer decoded={decoded} />
+      return <AccountIdViewer {...props} decoded={props.decoded} />
     case "Sequence":
-      return <SequenceViewer decoded={decoded} />
+      return <SequenceViewer {...props} decoded={props.decoded} />
     case "Array":
-      return <ArrayViewer decoded={decoded} />
+      return <ArrayViewer {...props} decoded={props.decoded} />
     case "Tuple":
-      return <TupleViewer decoded={decoded} />
+      return <TupleViewer {...props} decoded={props.decoded} />
     case "Struct":
-      return <StructViewer decoded={decoded} />
+      return <StructViewer {...props} decoded={props.decoded} />
     case "Enum":
-      return <EnumViewer decoded={decoded} />
+      return <EnumViewer {...props} decoded={props.decoded} />
 
     default:
-      return <div>NotImplemented: {decoded.codec}</div>
+      return <div>NotImplemented: {props.decoded.codec}</div>
   }
 }
-
-const LabeledInternalDecodedViewer = InternalDecodedViewer

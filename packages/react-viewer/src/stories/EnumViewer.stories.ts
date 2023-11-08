@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { EnumViewer } from "../components/EnumViewer"
+import { EnumViewer } from "../components/complex/EnumViewer"
 import mockDecoded from "../helpers/mockDecoded"
 
 const meta = {

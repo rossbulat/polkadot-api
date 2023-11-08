@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { BigNumberViewer } from "../components/BigNumberViewer"
+import { BigNumberViewer } from "../components/primitives/BigNumberViewer"
 import mockDecoded from "../helpers/mockDecoded"
 
 const meta = {

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react"
 
-import { NumberViewer } from "../components/NumberViewer"
+import { NumberViewer } from "../components/primitives/NumberViewer"
 import mockDecoded from "../helpers/mockDecoded"
 
 const meta = {

@@ -14,6 +14,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    callData: "0x00040c041104220433044404550466",
+    callData:
+      "0x0507006cb03c6140592ec09e885993c26786d9bd6cd02fa1109c4da32fa2ee8fae9e28070088526a74",
   },
 }

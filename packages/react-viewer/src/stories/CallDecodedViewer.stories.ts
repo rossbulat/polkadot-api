@@ -16,11 +16,18 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+export const StakingChill: Story = {
+  name: "Staking.chill()",
+  args: {
+    decoded: callDecoder("0x0706"),
+  },
+}
+
 export const StakingKick: Story = {
   name: "Staking.kick()",
   args: {
     decoded: callDecoder(
-      "0x071504006cb03c6140592ec09e885993c26786d9bd6cd02fa1109c4da32fa2ee8fae9e28",
+      "0x07151401000210deadbeef00d492503d02386c40d575c75895ddbbd88b6ad56c5f975f039df05b0ca88fb453033200000000000000000000000000000000000000000000000000000000000000042000000000000000000000000000000000000000",
     ),
   },
 }
