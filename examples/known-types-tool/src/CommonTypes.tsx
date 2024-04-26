@@ -1,31 +1,40 @@
+import {
+  LookupEntry,
+  getChecksumBuilder,
+  getLookupFn,
+} from "@polkadot-api/metadata-builders"
 import { state, useStateObservable } from "@react-rxjs/core"
-import { selectedChains$ } from "./ChainPicker"
-import { metadatas } from "./api/metadatas"
-import { EMPTY, catchError, map } from "rxjs"
-import { getChecksumBuilder } from "@polkadot-api/metadata-builders"
-import { V14, V15 } from "@polkadot-api/substrate-bindings"
 import { combineKeys } from "@react-rxjs/utils"
-import { knownTypesRepository } from "@polkadot-api/codegen"
+import { EMPTY, catchError, map } from "rxjs"
+import { selectedChains$ } from "./ChainPicker"
+import { CommonType } from "./CommonType"
+import { metadatas } from "./api/metadatas"
+import { V14, V15 } from "@polkadot-api/substrate-bindings"
 
-type LookupEntry =
-  V14["lookup"] | V15["lookup"] extends Array<infer R> ? R : never
-
+type MetadataEntry = (V15 | V14)["lookup"] extends Array<infer R> ? R : never
+type EnumEntry = LookupEntry & { type: "enum"; entry: MetadataEntry }
 const chainTypes$ = state(
   (chain: string) =>
     metadatas[chain].pipe(
       catchError(() => EMPTY),
       map((metadata) => {
+        const lookup = getLookupFn(metadata.lookup)
         const checksumBuilder = getChecksumBuilder(metadata)
 
-        const result: Record<string, LookupEntry[]> = {}
+        const result: Record<string, EnumEntry[]> = {}
         for (let i = 0; i < metadata.lookup.length; i++) {
+          if (metadata.lookup[i].def.tag !== "variant") continue
+
+          const def = lookup(i)
+          if (def.type !== "enum") continue
+
           const checksum = checksumBuilder.buildDefinition(i)
           if (!checksum) {
             throw new Error("unreachable")
           }
 
           result[checksum] = result[checksum] ?? []
-          result[checksum].push(metadata.lookup[i])
+          result[checksum].push({ ...def, entry: metadata.lookup[i] })
         }
 
         return result
@@ -41,7 +50,7 @@ const commonTypes$ = state(
         string,
         Array<{
           chain: string
-          type: LookupEntry
+          type: EnumEntry
         }>
       > = {}
 
@@ -67,21 +76,13 @@ const commonTypes$ = state(
   [],
 )
 
-export function CommonTypes() {
+export function CommonTypes({ className }: { className?: string }) {
   const commonTypes = useStateObservable(commonTypes$)
 
-  const getCurrentKnownType = (checksum: string) => {
-    const entry = knownTypesRepository[checksum]
-    if (!entry) return null
-    return typeof entry === "string" ? entry : entry.name
-  }
-
   return (
-    <ol>
+    <ol className={className}>
       {commonTypes.map(({ checksum, types }) => (
-        <li key={checksum}>
-          {checksum} {types.length} {getCurrentKnownType(checksum)}
-        </li>
+        <CommonType key={checksum} checksum={checksum} types={types} />
       ))}
     </ol>
   )

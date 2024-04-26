@@ -28,6 +28,7 @@
     "@radix-ui/themes": "^3.0.2",
     "@react-rxjs/core": "^0.10.7",
     "@react-rxjs/utils": "^0.9.7",
+    "idb-keyval": "^6.2.1",
     "lucide-react": "^0.374.0",
     "polkadot-api": "workspace:*",
     "react": "^18.2.0",
