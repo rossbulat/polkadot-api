@@ -5,8 +5,10 @@ import {
   EnumEntry,
   currentName$,
   getCurrentKnownType,
+  isHighlighted$,
   setTypeName,
 } from "./commonTypes.state"
+import { twMerge } from "tailwind-merge"
 
 export const CommonType: FC<{
   checksum: string
@@ -17,6 +19,7 @@ export const CommonType: FC<{
 }> = ({ checksum, types }) => {
   const [expanded, setExpanded] = useState(false)
   const name = useStateObservable(currentName$(checksum))
+  const isHighlighted = useStateObservable(isHighlighted$(checksum))
 
   const groupedTypes = useMemo(() => {
     const result: Record<string, EnumEntry[]> = {}
@@ -30,7 +33,10 @@ export const CommonType: FC<{
   return (
     <>
       <div
-        className="flex gap-1 cursor-pointer px-2 py-1 bg-slate-50"
+        className={twMerge(
+          "flex gap-1 cursor-pointer px-2 py-1",
+          isHighlighted ? "bg-yellow-50" : "bg-slate-50",
+        )}
         onClick={() => setExpanded(!expanded)}
       >
         <div className="text-slate-400 font-mono">

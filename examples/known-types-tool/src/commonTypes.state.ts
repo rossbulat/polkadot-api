@@ -1,3 +1,4 @@
+import { knownTypesRepository } from "@polkadot-api/codegen"
 import {
   LookupEntry,
   getChecksumBuilder,
@@ -6,10 +7,16 @@ import {
 import { V14, V15 } from "@polkadot-api/substrate-bindings"
 import { state } from "@react-rxjs/core"
 import { combineKeys, createSignal, mergeWithKey } from "@react-rxjs/utils"
-import { EMPTY, catchError, map, scan } from "rxjs"
+import {
+  EMPTY,
+  catchError,
+  combineLatest,
+  distinctUntilChanged,
+  map,
+  scan,
+} from "rxjs"
 import { selectedChains$ } from "./ChainPicker"
 import { metadatas } from "./api/metadatas"
-import { knownTypesRepository } from "@polkadot-api/codegen"
 
 export type MetadataEntry =
   (V15 | V14)["lookup"] extends Array<infer R> ? R : never
@@ -83,11 +90,14 @@ export const getCurrentKnownType = (checksum: string) => {
   return typeof entry === "string" ? entry : entry.name
 }
 
+export const [searchChange$, setSearch] = createSignal<string>()
+export const search$ = state(searchChange$, "")
+
 export const [nameChange$, setTypeName] = createSignal<{
   checksum: string
   name: string
 }>()
-const commonTypeNames$ = state(
+export const commonTypeNames$ = state(
   mergeWithKey({
     types: combineKeys(selectedChains$, chainTypes$),
     name: nameChange$,
@@ -113,6 +123,22 @@ const commonTypeNames$ = state(
 )
 
 export const currentName$ = state(
-  (checksum: string) => commonTypeNames$.pipe(map((v) => v[checksum])),
+  (checksum: string) =>
+    commonTypeNames$.pipe(
+      map((v) => v[checksum] ?? ""),
+      distinctUntilChanged(),
+    ),
   "",
+)
+export const isHighlighted$ = state(
+  (checksum: string) =>
+    combineLatest([currentName$(checksum), search$]).pipe(
+      map(
+        ([name, search]) =>
+          search.length &&
+          (checksum.includes(search) ||
+            name.toLocaleLowerCase().includes(search)),
+      ),
+    ),
+  false,
 )
