@@ -1,13 +1,12 @@
 import { TextField } from "@radix-ui/themes"
 import { useStateObservable } from "@react-rxjs/core"
-import { FC, useMemo } from "react"
+import { FC, useMemo, useState } from "react"
 import {
   EnumEntry,
   currentName$,
   getCurrentKnownType,
   setTypeName,
 } from "./commonTypes.state"
-import { useViewTransition } from "./lib/useViewTransition"
 
 export const CommonType: FC<{
   checksum: string
@@ -16,7 +15,7 @@ export const CommonType: FC<{
     type: EnumEntry
   }>
 }> = ({ checksum, types }) => {
-  const [expanded, setExpanded] = useViewTransition(false)
+  const [expanded, setExpanded] = useState(false)
   const name = useStateObservable(currentName$(checksum))
 
   const groupedTypes = useMemo(() => {
@@ -29,13 +28,7 @@ export const CommonType: FC<{
   }, [types])
 
   return (
-    <li
-      key={checksum}
-      className="border first:rounded-t last:rounded-b"
-      style={{
-        viewTransitionName: `t${checksum}`,
-      }}
-    >
+    <>
       <div
         className="flex gap-1 cursor-pointer px-2 py-1 bg-slate-50"
         onClick={() => setExpanded(!expanded)}
@@ -84,7 +77,7 @@ export const CommonType: FC<{
           </div>
         </div>
       ) : null}
-    </li>
+    </>
   )
 }
 
