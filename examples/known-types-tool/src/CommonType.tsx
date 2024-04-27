@@ -1,17 +1,14 @@
-import { knownTypesRepository } from "@polkadot-api/codegen"
-import { LookupEntry } from "@polkadot-api/metadata-builders"
-import { V14, V15 } from "@polkadot-api/substrate-bindings"
-import { FC, useState } from "react"
 import { TextField } from "@radix-ui/themes"
+import { useStateObservable } from "@react-rxjs/core"
+import { FC, useMemo } from "react"
+import {
+  EnumEntry,
+  currentName$,
+  getCurrentKnownType,
+  setTypeName,
+} from "./commonTypes.state"
+import { useViewTransition } from "./lib/useViewTransition"
 
-const getCurrentKnownType = (checksum: string) => {
-  const entry = knownTypesRepository[checksum]
-  if (!entry) return null
-  return typeof entry === "string" ? entry : entry.name
-}
-
-type MetadataEntry = (V15 | V14)["lookup"] extends Array<infer R> ? R : never
-type EnumEntry = LookupEntry & { type: "enum"; entry: MetadataEntry }
 export const CommonType: FC<{
   checksum: string
   types: Array<{
@@ -19,44 +16,69 @@ export const CommonType: FC<{
     type: EnumEntry
   }>
 }> = ({ checksum, types }) => {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useViewTransition(false)
+  const name = useStateObservable(currentName$(checksum))
+
+  const groupedTypes = useMemo(() => {
+    const result: Record<string, EnumEntry[]> = {}
+    types.forEach(({ chain, type }) => {
+      result[chain] = result[chain] ?? []
+      result[chain].push(type)
+    })
+    return result
+  }, [types])
 
   return (
     <li
       key={checksum}
-      className="border px-2 py-1 first:rounded-t last:rounded-b"
+      className="border first:rounded-t last:rounded-b"
+      style={{
+        viewTransitionName: `t${checksum}`,
+      }}
     >
       <div
-        className="flex gap-1 cursor-pointer"
-        onClick={() => setExpanded((v) => !v)}
+        className="flex gap-1 cursor-pointer px-2 py-1 bg-slate-50"
+        onClick={() => setExpanded(!expanded)}
       >
         <div className="text-slate-400 font-mono">
           {checksum.padStart(13, "\xa0")}
         </div>
-        <div className="flex-1">{getCurrentKnownType(checksum)}</div>
+        <code className="flex-1">{name}</code>
         <div>{types.length}</div>
       </div>
       {expanded ? (
-        <div className="py-2">
+        <div className="px-2 py-2 flex flex-col gap-2">
           <div>
-            <p>Current name: {getCurrentKnownType(checksum)}</p>
+            <h2 className="text-2xl">Name</h2>
+            <div>
+              Current: <code>{getCurrentKnownType(checksum)}</code>
+            </div>
             <label className="flex items-center gap-1">
               New name:
               <TextField.Root
                 className="flex-1"
-                value={getCurrentKnownType(checksum) ?? ""}
+                value={name ?? ""}
+                onChange={(evt) =>
+                  setTypeName({ checksum, name: evt.target.value })
+                }
               />
             </label>
           </div>
           <div>
-            <h2 className="text-2xl">Types</h2>
+            <h2 className="text-2xl">Variants</h2>
+            <ul className="flex flex-wrap gap-2">
+              {Object.keys(types[0].type.value).map((key) => (
+                <li key={key} className="px-2 py-1 border rounded">
+                  <code>{key}</code>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h2 className="text-2xl">References</h2>
             <div className="flex flex-wrap justify-center gap-2">
-              {types.map((type) => (
-                <ChainType
-                  key={type.chain + "-" + type.type.id}
-                  chain={type.chain}
-                  type={type.type}
-                />
+              {Object.entries(groupedTypes).map(([chain, types]) => (
+                <ChainTypes key={chain} chain={chain} types={types} />
               ))}
             </div>
           </div>
@@ -66,42 +88,24 @@ export const CommonType: FC<{
   )
 }
 
-const ChainType: FC<{
+const ChainTypes: FC<{
   chain: string
-  type: EnumEntry
-}> = ({ chain, type }) => {
+  types: EnumEntry[]
+}> = ({ chain, types }) => {
   return (
     <div className="border rounded p-2 flex flex-col gap-1">
-      <h3 className="text-xl py-1">
-        {chain} <span className="text-slate-400">({type.id})</span>
-      </h3>
-      <p>
-        <div className="font-bold">Path:</div>
-        <pre>
-          <code>{type.entry.path.join(".") || "N/A"}</code>
-        </pre>
-      </p>
-      <p>
-        <div className="font-bold">Inner docs:</div>
-        <pre>
-          <code>
-            {Object.entries(type.innerDocs)
-              .filter(([, docs]) => docs.join(";") !== "")
-              .map(([key, docs]) => `${key}: ${docs.join(";")}`)
-              .join("\n") || "N/A"}
-          </code>
-        </pre>
-      </p>
-      <p>
-        <div className="font-bold">Variants:</div>
-        <pre>
-          <code>
-            {Object.entries(type.value)
-              .map(([key, type]) => `${key}`)
-              .join("\n")}
-          </code>
-        </pre>
-      </p>
+      <h3 className="text-xl font-bold">{chain}</h3>
+      <div>
+        <div className="font-bold">Types</div>
+        <ul>
+          {types.map((type) => (
+            <li key={type.id} className="flex gap-2">
+              <span className="text-slate-400">{type.id}</span>
+              <code>{type.entry.path.join(".") || "N/A"}</code>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }

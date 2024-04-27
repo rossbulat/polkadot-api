@@ -1,8 +1,8 @@
-import SmWorker from "polkadot-api/smoldot/worker?worker"
-import { startFromWorker } from "polkadot-api/smoldot/from-worker"
+// import SmWorker from "polkadot-api/smoldot/worker?worker"
+// import { startFromWorker } from "polkadot-api/smoldot/from-worker"
 import { Chain } from "smoldot"
 
-export const smoldot = startFromWorker(new SmWorker())
+// export const smoldot = startFromWorker(new SmWorker())
 
 const chainImports = {
   polkadot: {
@@ -33,21 +33,22 @@ export const chains: Record<string, Promise<Chain>> = Object.fromEntries(
   Object.entries(chainImports).flatMap(([key, chains]) => {
     const { relayChain, ...parachains } = chains
 
-    const chainRelayChain = relayChain.then(({ chainSpec }) =>
-      smoldot.addChain({
-        chainSpec,
-      }),
-    )
+    const chainRelayChain = new Promise<Chain>(() => {})
+    // relayChain.then(({ chainSpec }) =>
+    //   smoldot.addChain({
+    //     chainSpec,
+    //   }),
+    // )
     const parachainChains = Object.entries(parachains).map(
       ([parachainKey, parachain]) =>
         [
           `${key}.${parachainKey}`,
           Promise.all([chainRelayChain, parachain]).then(
-            ([chainRelayChain, parachain]) =>
-              smoldot.addChain({
-                chainSpec: parachain.chainSpec,
-                potentialRelayChains: [chainRelayChain],
-              }),
+            () => new Promise<Chain>(() => {}),
+            // smoldot.addChain({
+            //   chainSpec: parachain.chainSpec,
+            //   potentialRelayChains: [chainRelayChain],
+            // }),
           ),
         ] as const,
     )
