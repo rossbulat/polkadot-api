@@ -1,5 +1,9 @@
 import { getObservableClient } from "@polkadot-api/observable-client"
+import { V14, V15 } from "@polkadot-api/substrate-bindings"
 import { createClient } from "@polkadot-api/substrate-client"
+import { state } from "@react-rxjs/core"
+import { get, set } from "idb-keyval"
+import { withLogsRecorder } from "polkadot-api/logs-provider"
 import { getSmProvider } from "polkadot-api/sm-provider"
 import { mapObject } from "polkadot-api/utils"
 import {
@@ -10,20 +14,18 @@ import {
   from,
   map,
   of,
-  race,
   share,
-  shareReplay,
   startWith,
   switchMap,
   take,
   tap,
 } from "rxjs"
-import { chains } from "./smoldot"
-import { state } from "@react-rxjs/core"
 import { selectedChains$ } from "../ChainPicker"
-import { withLogsRecorder } from "polkadot-api/logs-provider"
-import { get, set } from "idb-keyval"
-import { V14, V15 } from "@polkadot-api/substrate-bindings"
+import { chains } from "./smoldot"
+import { createSignal } from "@react-rxjs/utils"
+
+export const [changeUseCache$, setUseCache] = createSignal<boolean>()
+export const useCache$ = state(changeUseCache$, true)
 
 export const metadatas = mapObject(chains, (chain, key) => {
   const throughSmoldot$ = from(chain).pipe(
@@ -49,7 +51,12 @@ export const metadatas = mapObject(chains, (chain, key) => {
     }),
   )
 
-  const throughIDB$ = from(get<V14 | V15 | undefined>(key))
+  const throughIDB$ = useCache$.pipe(
+    take(1),
+    switchMap(async (useCache) =>
+      useCache ? get<V14 | V15 | undefined>(key) : undefined,
+    ),
+  )
 
   return throughIDB$.pipe(
     switchMap((result) => {
