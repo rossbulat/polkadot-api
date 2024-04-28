@@ -1,4 +1,4 @@
-import { Button, TextField } from "@radix-ui/themes"
+import { Button, Popover, TextField } from "@radix-ui/themes"
 import { useStateObservable } from "@react-rxjs/core"
 import { Search } from "lucide-react"
 import { ForwardedRef, forwardRef, useRef } from "react"
@@ -6,7 +6,12 @@ import { Components, Virtuoso, VirtuosoHandle } from "react-virtuoso"
 import { firstValueFrom } from "rxjs"
 import { twMerge } from "tailwind-merge"
 import { CommonType } from "./CommonType"
-import { commonTypeNames$, commonTypes$, setSearch } from "./commonTypes.state"
+import {
+  commonTypeNames$,
+  commonTypes$,
+  newKnownTypes$,
+  setSearch,
+} from "./commonTypes.state"
 
 export function CommonTypes({ className }: { className?: string }) {
   const commonTypes = useStateObservable(commonTypes$)
@@ -39,7 +44,14 @@ export function CommonTypes({ className }: { className?: string }) {
   return (
     <div className={twMerge("flex flex-col gap-2", className)}>
       <div className="border-2 rounded p-2 sticky top-2 z-10 bg-slate-50 flex justify-between">
-        <Button>Export</Button>
+        <Popover.Root>
+          <Popover.Trigger>
+            <Button>Export</Button>
+          </Popover.Trigger>
+          <Popover.Content>
+            <ExportKnownTypes />
+          </Popover.Content>
+        </Popover.Root>
         <TextField.Root
           onChange={(evt) => changeSearch(evt.target.value)}
           onBlur={(evt) => {
@@ -74,3 +86,18 @@ const Item: Components["Item"] = forwardRef(
     />
   ),
 )
+
+const ExportKnownTypes = () => {
+  const newKnownTypes = useStateObservable(newKnownTypes$)
+
+  return (
+    <div className="p-2 max-h-96 flex flex-col gap-2">
+      <p>Here are the known types object for the selected chains</p>
+      <pre className="overflow-auto border rounded p-2">
+        <code className="select-all">
+          {JSON.stringify(newKnownTypes, null, 2)}
+        </code>
+      </pre>
+    </div>
+  )
+}

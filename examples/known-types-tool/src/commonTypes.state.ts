@@ -1,4 +1,4 @@
-import { knownTypesRepository } from "@polkadot-api/codegen"
+import { RepositoryEntry, knownTypesRepository } from "@polkadot-api/codegen"
 import {
   LookupEntry,
   getChecksumBuilder,
@@ -141,4 +141,48 @@ export const isHighlighted$ = state(
       ),
     ),
   false,
+)
+
+export const newKnownTypes$ = state(
+  combineLatest({
+    chains: combineKeys(selectedChains$, chainTypes$),
+    names: commonTypeNames$,
+  }).pipe(
+    map(({ chains, names }) => {
+      const result: Record<string, RepositoryEntry> = {}
+
+      Object.entries(names).forEach(([checksum, name]) => {
+        if (!name) return
+
+        const chainsWithType = Array.from(chains.keys()).filter(
+          (chain) => checksum in chains.get(chain)!,
+        )
+        if (chainsWithType.length === 0) return
+
+        const paths = Array.from(
+          new Set(
+            chainsWithType.flatMap((chain) =>
+              chains
+                .get(chain)!
+                [checksum].map((type) => type.entry.path.join(".")),
+            ),
+          ),
+        )
+
+        const selectedChain = chains.get(chainsWithType[0])!
+        const chainType = selectedChain[checksum][0]
+        const type = `Enum(${Object.keys(chainType.value).join(", ")})`
+
+        result[checksum] = {
+          name,
+          chains: chainsWithType.join(", "),
+          paths,
+          type,
+        }
+      })
+
+      return result
+    }),
+  ),
+  {},
 )
