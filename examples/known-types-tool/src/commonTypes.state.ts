@@ -77,7 +77,6 @@ export const commonTypes$ = state(
           checksum,
           types,
         }))
-        .filter((a) => new Set(a.types.map((type) => type.chain)).size > 1)
         .sort((a, b) => b.types.length - a.types.length)
     }),
   ),

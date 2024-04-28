@@ -1,6 +1,7 @@
 import { TextField } from "@radix-ui/themes"
 import { useStateObservable } from "@react-rxjs/core"
 import { FC, useMemo, useState } from "react"
+import { twMerge } from "tailwind-merge"
 import {
   EnumEntry,
   currentName$,
@@ -8,7 +9,7 @@ import {
   isHighlighted$,
   setTypeName,
 } from "./commonTypes.state"
-import { twMerge } from "tailwind-merge"
+import { typeReferences$ } from "./typeReferences.state"
 
 export const CommonType: FC<{
   checksum: string
@@ -74,37 +75,94 @@ export const CommonType: FC<{
             </ul>
           </div>
           <div>
-            <h2 className="text-2xl">References</h2>
+            <h2 className="text-2xl">Chains</h2>
             <div className="flex flex-wrap justify-center gap-2">
               {Object.entries(groupedTypes).map(([chain, types]) => (
-                <ChainTypes key={chain} chain={chain} types={types} />
+                <Chain key={chain} chain={chain} types={types} />
               ))}
             </div>
           </div>
+          <ChainReferences checksum={checksum} chain={types[0].chain} />
         </div>
       ) : null}
     </>
   )
 }
 
-const ChainTypes: FC<{
+const Chain: FC<{
   chain: string
   types: EnumEntry[]
-}> = ({ chain, types }) => {
-  return (
-    <div className="border rounded p-2 flex flex-col gap-1">
-      <h3 className="text-xl font-bold">{chain}</h3>
-      <div>
-        <div className="font-bold">Types</div>
-        <ul>
-          {types.map((type) => (
-            <li key={type.id} className="flex gap-2">
-              <span className="text-slate-400">{type.id}</span>
-              <code>{type.entry.path.join(".") || "N/A"}</code>
-            </li>
-          ))}
-        </ul>
-      </div>
+}> = ({ chain, types }) => (
+  <div className="border rounded p-2 flex flex-col gap-1">
+    <h3 className="text-xl font-bold">{chain}</h3>
+    <div>
+      <div className="font-bold">Types</div>
+      <ul>
+        {types.map((type) => (
+          <li key={type.id} className="flex gap-2">
+            <span className="text-slate-400">{type.id}</span>
+            <code>{type.entry.path.join(".") || "N/A"}</code>
+          </li>
+        ))}
+      </ul>
     </div>
+  </div>
+)
+
+const ChainReferences: FC<{ chain: string; checksum: string }> = ({
+  chain,
+  checksum,
+}) => {
+  const references = useStateObservable(typeReferences$(chain))
+  const refs = references[checksum]
+  if (!refs) return null
+
+  return (
+    <>
+      <div>
+        <h2 className="text-2xl">References ({chain})</h2>
+        <div>
+          <div className="font-bold">Direct</div>
+          <ReferenceList references={refs.inputs.direct} />
+          <div className="font-bold">Indirect</div>
+          <ReferenceList references={refs.inputs.indirect} />
+        </div>
+      </div>
+      <div>
+        <h2 className="text-2xl">Referenced by</h2>
+        <div>
+          <div className="font-bold">Direct</div>
+          <ReferenceList references={refs.backRefs.direct} />
+          <div className="font-bold">Indirect</div>
+          <ReferenceList references={refs.backRefs.indirect} />
+        </div>
+      </div>
+    </>
   )
+}
+
+const ReferenceList: FC<{ references: string[] }> = ({ references }) => (
+  <ul className="flex flex-wrap items-center gap-2">
+    {references.sort(sortRefs).map((key) => (
+      <EnumReference key={key} checksum={key} />
+    ))}
+  </ul>
+)
+const EnumReference: FC<{ checksum: string }> = ({ checksum }) => {
+  const name = useStateObservable(currentName$(checksum))
+  return (
+    <li className="border rounded py-1 px-2">
+      <code>{name || checksum}</code>
+    </li>
+  )
+}
+
+const sortRefs = (k1: string, k2: string) => {
+  if (k1.includes(".")) {
+    return k2.includes(".") ? k1.localeCompare(k2) : 1
+  }
+  if (k2.includes(".")) {
+    return -1
+  }
+  return k1.localeCompare(k2)
 }
