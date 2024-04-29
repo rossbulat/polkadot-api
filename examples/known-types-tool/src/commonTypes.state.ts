@@ -5,7 +5,7 @@ import {
   getLookupFn,
 } from "@polkadot-api/metadata-builders"
 import { V14, V15 } from "@polkadot-api/substrate-bindings"
-import { state } from "@react-rxjs/core"
+import { state, withDefault } from "@react-rxjs/core"
 import { combineKeys, createSignal, mergeWithKey } from "@react-rxjs/utils"
 import {
   EMPTY,
@@ -184,4 +184,26 @@ export const newKnownTypes$ = state(
     }),
   ),
   {},
+)
+
+const duplicateNames$ = commonTypeNames$.pipeState(
+  map((names) => {
+    const inverted: Record<string, string[]> = {}
+    Object.entries(names).forEach(([checksum, name]) => {
+      inverted[name] = inverted[name] ?? []
+      inverted[name].push(checksum)
+    })
+    return Object.fromEntries(
+      Object.entries(inverted).filter(([, checksums]) => checksums.length > 1),
+    )
+  }),
+  withDefault({} as Record<string, string[]>),
+)
+export const nameDuplicate$ = state(
+  (name: string) =>
+    duplicateNames$.pipe(
+      map((duplicates) => duplicates[name] ?? []),
+      distinctUntilChanged((a, b) => a.join(",") === b.join(",")),
+    ),
+  [],
 )

@@ -20,7 +20,7 @@ export function CommonTypes({ className }: { className?: string }) {
 
   const changeSearch = (newValue: string) => {
     const value = newValue.trim().toLocaleLowerCase()
-    setSearch(newValue)
+    setSearch(value)
     if (value.length) {
       // I don't want to subscribe at this level for name changes, so I just #yolo
       firstValueFrom(commonTypeNames$).then((names) => {

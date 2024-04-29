@@ -7,6 +7,7 @@ import {
   currentName$,
   getCurrentKnownType,
   isHighlighted$,
+  nameDuplicate$,
   setTypeName,
 } from "./commonTypes.state"
 import { typeReferences$ } from "./typeReferences.state"
@@ -20,6 +21,9 @@ export const CommonType: FC<{
 }> = ({ checksum, types }) => {
   const [expanded, setExpanded] = useState(false)
   const name = useStateObservable(currentName$(checksum))
+  const duplicates = useStateObservable(nameDuplicate$(name)).filter(
+    (v) => v !== checksum,
+  )
   const isHighlighted = useStateObservable(isHighlighted$(checksum))
 
   const groupedTypes = useMemo(() => {
@@ -63,6 +67,21 @@ export const CommonType: FC<{
                 }
               />
             </label>
+            {duplicates.length ? (
+              <div>
+                <h3>Duplicates</h3>
+                <ul className="flex flex-wrap gap-2">
+                  {duplicates.map((checksum) => (
+                    <li
+                      key={checksum}
+                      className="px-2 py-1 border rounded font-mono"
+                    >
+                      {checksum}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </div>
           <div>
             <h2 className="text-2xl">Variants</h2>
