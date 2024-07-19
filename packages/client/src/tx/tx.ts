@@ -37,10 +37,6 @@ import {
   TxPromise,
   TxSignFn,
 } from "./types"
-import {
-  isCompatible,
-  mapLookupToTypedef,
-} from "@polkadot-api/metadata-compatibility"
 
 export { submit, submit$ }
 
@@ -74,7 +70,8 @@ export const createTxEntry = <
       arg: any,
       txOptions: Partial<{ asset: any }> = {},
     ) => {
-      const ctx = getCompatibilityApi(runtime).runtime()
+      const compatApi = getCompatibilityApi(runtime)
+      const ctx = compatApi.runtime()
       if (!argsAreCompatible(runtime, ctx, arg))
         throw new Error(`Incompatible runtime entry Tx(${pallet}.${name})`)
 
@@ -83,10 +80,10 @@ export const createTxEntry = <
       if (txOptions.asset) {
         if (
           assetId == null ||
-          !isCompatible(
+          !compatApi.compatModule.isCompatible(
             txOptions.asset,
-            mapLookupToTypedef(lookup(assetId)),
-            (id) => getRuntimeTypedef(ctx, id),
+            compatApi.compatModule.mapLookupToTypedef(lookup(assetId)),
+            (id) => getRuntimeTypedef(runtime, ctx, id),
           )
         )
           throw new Error(`Incompatible runtime asset`)

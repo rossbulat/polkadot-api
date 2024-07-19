@@ -1,14 +1,9 @@
-import { MetadataLookup } from "@polkadot-api/metadata-builders"
+import type { MetadataLookup } from "@polkadot-api/metadata-builders"
 import {
-  CompatibilityCache,
   CompatibilityLevel,
-  EntryPoint,
-  EntryPointCodec,
-  TypedefCodec,
-  TypedefNode,
-  entryPointsAreCompatible,
-  mapLookupToTypedef,
-  valueIsCompatibleWithDest,
+  type CompatibilityCache,
+  type EntryPoint,
+  type TypedefNode,
 } from "@polkadot-api/metadata-compatibility"
 import {
   ChainHead$,
@@ -16,8 +11,11 @@ import {
   RuntimeContext,
 } from "@polkadot-api/observable-client"
 import { Tuple, Vector } from "@polkadot-api/substrate-bindings"
-import { Observable, combineLatest, filter, firstValueFrom, map } from "rxjs"
+import { combineLatest, filter, firstValueFrom, map, Observable } from "rxjs"
 import { ChainDefinition } from "./descriptors"
+
+const metadataCompatibility = import("@polkadot-api/metadata-compatibility")
+export type MetadataCompatibilityModule = Awaited<typeof metadataCompatibility>
 
 export class CompatibilityToken<D = unknown> {
   // @ts-ignore
@@ -33,6 +31,7 @@ interface CompatibilityTokenApi {
     name: string,
   ) => EntryPoint
   getApiEntryPoint: (name: string, method: string) => EntryPoint
+  compatModule: MetadataCompatibilityModule
 }
 const compatibilityTokenApi = new WeakMap<
   CompatibilityToken,
@@ -49,9 +48,13 @@ export const enum OpType {
   Const = "constants",
 }
 
-const EntryPointsCodec = Vector(EntryPointCodec)
-const TypedefsCodec = Vector(TypedefCodec)
-const TypesCodec = Tuple(EntryPointsCodec, TypedefsCodec)
+const typesCodec = metadataCompatibility.then(
+  ({ EntryPointCodec, TypedefCodec }) => {
+    const EntryPointsCodec = Vector(EntryPointCodec)
+    const TypedefsCodec = Vector(TypedefCodec)
+    return Tuple(EntryPointsCodec, TypedefsCodec)
+  },
+)
 
 export const createCompatibilityToken = <D extends ChainDefinition>(
   chainDefinition: D,
@@ -67,24 +70,28 @@ export const createCompatibilityToken = <D extends ChainDefinition>(
   })
 
   const promise = Promise.all([
-    chainDefinition.metadataTypes.then(TypesCodec.dec),
+    metadataCompatibility,
+    typesCodec.then((codec) => chainDefinition.metadataTypes.then(codec.dec)),
     chainDefinition.descriptors,
     awaitedRuntime,
-  ]).then(([[entryPoints, typedefNodes], descriptors, runtime]) => {
-    const token = new (CompatibilityToken as any)()
-    compatibilityTokenApi.set(token, {
-      runtime,
-      getPalletEntryPoint(opType, pallet, name) {
-        return entryPoints[descriptors[opType][pallet][name]]
-      },
-      getApiEntryPoint(name, method) {
-        return entryPoints[descriptors.apis[name][method]]
-      },
-      typedefNodes,
-    })
+  ]).then(
+    ([compatModule, [entryPoints, typedefNodes], descriptors, runtime]) => {
+      const token = new (CompatibilityToken as any)()
+      compatibilityTokenApi.set(token, {
+        runtime,
+        getPalletEntryPoint(opType, pallet, name) {
+          return entryPoints[descriptors[opType][pallet][name]]
+        },
+        getApiEntryPoint(name, method) {
+          return entryPoints[descriptors.apis[name][method]]
+        },
+        typedefNodes,
+        compatModule,
+      })
 
-    return token
-  })
+      return token
+    },
+  )
 
   return promise
 }
@@ -113,9 +120,15 @@ export const compatibilityHelper = (
   getDescriptorEntryPoint: (descriptorApi: CompatibilityTokenApi) => EntryPoint,
   getRuntimeEntryPoint: (ctx: RuntimeContext) => EntryPoint,
 ) => {
-  const getRuntimeTypedef = (ctx: RuntimeContext, id: number) => {
+  const getRuntimeTypedef = (
+    token: CompatibilityToken,
+    ctx: RuntimeContext,
+    id: number,
+  ) => {
     const cache = getMetadataCache(ctx)
-    return (cache.typeNodes[id] ||= mapLookupToTypedef(cache.lookup(id)))
+    return (cache.typeNodes[id] ||= compatibilityTokenApi
+      .get(token)!
+      .compatModule.mapLookupToTypedef(cache.lookup(id)))
   }
 
   function getCompatibilityLevels(
@@ -132,15 +145,15 @@ export const compatibilityHelper = (
     ctx ||= compatibilityApi.runtime()
     const descriptorEntryPoint = getDescriptorEntryPoint(compatibilityApi)
     const runtimeEntryPoint = getRuntimeEntryPoint(ctx)
-    const descriptorNodes = compatibilityApi.typedefNodes
+    const { typedefNodes, compatModule } = compatibilityApi
 
     const cache = getMetadataCache(ctx)
 
-    return entryPointsAreCompatible(
+    return compatModule.entryPointsAreCompatible(
       descriptorEntryPoint,
-      (id) => descriptorNodes[id],
+      (id) => typedefNodes[id],
       runtimeEntryPoint,
-      (id) => getRuntimeTypedef(ctx, id),
+      (id) => getRuntimeTypedef(descriptors, ctx, id),
       cache.compat,
     )
   }
@@ -176,9 +189,11 @@ export const compatibilityHelper = (
 
     const entryPoint = getRuntimeEntryPoint(ctx)
 
-    return valueIsCompatibleWithDest(
+    const { compatModule } = compatibilityTokenApi.get(descriptors)!
+
+    return compatModule.valueIsCompatibleWithDest(
       entryPoint.args,
-      (id) => getRuntimeTypedef(ctx, id),
+      (id) => getRuntimeTypedef(descriptors, ctx, id),
       args,
     )
   }
@@ -195,7 +210,7 @@ export const compatibilityHelper = (
 
     const entryPoint = getDescriptorEntryPoint(compatibilityApi)
 
-    return valueIsCompatibleWithDest(
+    return compatibilityApi.compatModule.valueIsCompatibleWithDest(
       entryPoint.values,
       (id) => compatibilityApi.typedefNodes[id],
       values,

@@ -1,10 +1,11 @@
-import { getPolkadotSignerFromPjs } from "./from-pjs-account"
 import type {
   InjectedAccount,
   InjectedExtension,
   InjectedPolkadotAccount,
   KeypairType,
 } from "./types"
+
+const fromPjsModule = import("./from-pjs-account")
 
 export type {
   KeypairType,
@@ -31,6 +32,7 @@ export const connectInjectedExtension = async (
     enabledExtension.signer,
   )
   const signRaw = enabledExtension.signer.signRaw.bind(enabledExtension.signer)
+  const { getPolkadotSignerFromPjs } = await fromPjsModule
 
   const toPolkadotInjected = (
     accounts: InjectedAccount[],

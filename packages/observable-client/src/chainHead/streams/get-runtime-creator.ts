@@ -1,6 +1,5 @@
-import {
+import type {
   getDynamicBuilder,
-  getLookupFn,
   MetadataLookup,
 } from "@polkadot-api/metadata-builders"
 import {
@@ -9,7 +8,6 @@ import {
   Codec,
   compact,
   Decoder,
-  metadata as metadataCodec,
   Option,
   SS58String,
   Tuple,
@@ -21,6 +19,7 @@ import {
 import { toHex } from "@polkadot-api/utils"
 import {
   catchError,
+  combineLatest,
   map,
   mergeMap,
   Observable,
@@ -30,6 +29,9 @@ import {
   take,
 } from "rxjs"
 import { BlockNotPinnedError } from "../errors"
+
+const metadataBuilders = import("@polkadot-api/metadata-builders")
+const substrateBindings = import("@polkadot-api/substrate-bindings")
 
 export type SystemEvent = {
   phase:
@@ -70,6 +72,7 @@ const v15Args = toHex(u32.enc(15))
 const opaqueMeta14 = Tuple(compact, Bytes())
 const opaqueMeta15 = Option(Bytes())
 const u32ListDecoder = Vector(u32).dec
+const metadataCodec = substrateBindings.then(({ metadata }) => metadata)
 
 export const getRuntimeCreator = (
   call$: (hash: string, method: string, args: string) => Observable<string>,
@@ -100,9 +103,9 @@ export const getRuntimeCreator = (
     )
 
     const v14 = recoverCall$(hash, "Metadata_metadata", "").pipe(
-      map((x) => {
+      mergeMap(async (x) => {
         const [, metadataRaw] = opaqueMeta14.dec(x)!
-        const metadata = metadataCodec.dec(metadataRaw)
+        const metadata = (await metadataCodec).dec(metadataRaw)
         return { metadata: metadata.metadata.value as V14, metadataRaw }
       }),
     )
@@ -112,9 +115,9 @@ export const getRuntimeCreator = (
       "Metadata_metadata_at_version",
       v15Args,
     ).pipe(
-      map((x) => {
+      mergeMap(async (x) => {
         const metadataRaw = opaqueMeta15.dec(x)!
-        const metadata = metadataCodec.dec(metadataRaw)
+        const metadata = (await metadataCodec).dec(metadataRaw)
         return { metadata: metadata.metadata.value as V15, metadataRaw }
       }),
     )
@@ -128,8 +131,11 @@ export const getRuntimeCreator = (
   return (hash: string): Runtime => {
     const usages = new Set<string>([hash])
 
-    const runtimeContext$: Observable<RuntimeContext> = getMetadata$(hash).pipe(
-      map(({ metadata, metadataRaw }) => {
+    const runtimeContext$: Observable<RuntimeContext> = combineLatest([
+      metadataBuilders,
+      getMetadata$(hash),
+    ]).pipe(
+      map(([{ getLookupFn, getDynamicBuilder }, { metadata, metadataRaw }]) => {
         const lookup = getLookupFn(metadata)
         const dynamicBuilder = getDynamicBuilder(lookup)
         const events = dynamicBuilder.buildStorage("System", "Events")
