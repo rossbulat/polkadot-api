@@ -376,7 +376,7 @@ importers:
         specifier: ^5.5.4
         version: 5.5.4
 
-  packages/ink-builders:
+  packages/ink-contracts:
     dependencies:
       '@polkadot-api/metadata-builders':
         specifier: workspace:*
