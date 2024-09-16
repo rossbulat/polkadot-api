@@ -1,0 +1,9 @@
+{
+  "name": "polkadot-api_ledger-signer",
+  "types": "../dist/reexports/ledger-signer.d.ts",
+  "module": "../dist/esm/reexports/ledger-signer.mjs",
+  "import": "../dist/esm/reexports/ledger-signer.mjs",
+  "browser": "../dist/esm/reexports/ledger-signer.mjs",
+  "require": "../dist/reexports/ledger-signer.js",
+  "default": "../dist/reexports/ledger-signer.js"
+}

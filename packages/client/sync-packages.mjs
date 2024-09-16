@@ -7,6 +7,7 @@ export const reexports = [
   fromId("logs-provider"),
   fromId("polkadot-sdk-compat"),
   fromId("pjs-signer"),
+  fromId("ledger-signer"),
   fromId("signer"),
   fromId("sm-provider"),
   fromId("ws-provider/node"),

@@ -282,6 +282,9 @@ importers:
       '@polkadot-api/known-chains':
         specifier: workspace:*
         version: link:../known-chains
+      '@polkadot-api/ledger-signer':
+        specifier: workspace:*
+        version: link:../signers/ledger-signer
       '@polkadot-api/logs-provider':
         specifier: workspace:*
         version: link:../json-rpc/logs-provider
@@ -522,6 +525,28 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
+
+  packages/signers/ledger-signer:
+    dependencies:
+      '@ledgerhq/hw-transport':
+        specifier: ^6.31.2
+        version: 6.31.2
+      '@polkadot-api/merkleize-metadata':
+        specifier: workspace:*
+        version: link:../../merkleize-metadata
+      '@polkadot-api/polkadot-signer':
+        specifier: workspace:*
+        version: link:../polkadot-signer
+      '@polkadot-api/substrate-bindings':
+        specifier: workspace:*
+        version: link:../../substrate-bindings
+      '@polkadot-api/utils':
+        specifier: workspace:*
+        version: link:../../utils
+    devDependencies:
+      '@types/node':
+        specifier: ^22.2.0
+        version: 22.5.3
 
   packages/signers/pjs-signer:
     dependencies:
@@ -1072,6 +1097,18 @@ packages:
 
   '@juanelas/base64@1.1.5':
     resolution: {integrity: sha512-mjAF27LzwfYobdwqnxZgeucbKT5wRRNvILg3h5OvCWK+3F7mw/A1tnjHnNiTYtLmTvT/bM1jA5AX7eQawDGs1w==}
+
+  '@ledgerhq/devices@8.4.2':
+    resolution: {integrity: sha512-oWNTp3jCMaEvRHsXNYE/yo+PFMgXAJGFHLOU1UdE4/fYkniHbD9wdxwyZrZvrxr9hNw4/9wHiThyITwPtMzG7g==}
+
+  '@ledgerhq/errors@6.18.0':
+    resolution: {integrity: sha512-L3jQWAGyooxRDk/MRlW2v4Ji9+kloBtdmz9wBkHaj2j0n+05rweJSV3GHw9oye1BYMbVFqFffmT4H3hlXlCasw==}
+
+  '@ledgerhq/hw-transport@6.31.2':
+    resolution: {integrity: sha512-B27UIzMzm2IXPGYnEB95R7eHxpXBkTBHh6MUJJQZVknt8LilEz1tfpTYUdzAKDGQ+Z5MZyYb01Eh3Zqm3kn3uw==}
+
+  '@ledgerhq/logs@6.12.0':
+    resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
 
   '@noble/curves@1.6.0':
     resolution: {integrity: sha512-TlaHRXDehJuRNR9TfZDNQ45mMEd5dwUwmicsafcIX4SsNiqnCHKjE/1alYPd/lDRVhxdhUAlv8uEhMCI5zjIJQ==}
@@ -1738,6 +1775,10 @@ packages:
 
   eventemitter3@5.0.1:
     resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
+
+  events@3.3.0:
+    resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
+    engines: {node: '>=0.8.x'}
 
   execa@5.1.1:
     resolution: {integrity: sha512-8uSpZZocAZRBAPIEINJj3Lo9HyGitllczc27Eh5YYojjMFMn8yHMDMaUHE2Jqfq05D/wucwI4JGURyXt1vchyg==}
@@ -3285,6 +3326,24 @@ snapshots:
 
   '@juanelas/base64@1.1.5': {}
 
+  '@ledgerhq/devices@8.4.2':
+    dependencies:
+      '@ledgerhq/errors': 6.18.0
+      '@ledgerhq/logs': 6.12.0
+      rxjs: 7.8.1
+      semver: 7.6.3
+
+  '@ledgerhq/errors@6.18.0': {}
+
+  '@ledgerhq/hw-transport@6.31.2':
+    dependencies:
+      '@ledgerhq/devices': 8.4.2
+      '@ledgerhq/errors': 6.18.0
+      '@ledgerhq/logs': 6.12.0
+      events: 3.3.0
+
+  '@ledgerhq/logs@6.12.0': {}
+
   '@noble/curves@1.6.0':
     dependencies:
       '@noble/hashes': 1.5.0
@@ -3994,6 +4053,8 @@ snapshots:
   esutils@2.0.3: {}
 
   eventemitter3@5.0.1: {}
+
+  events@3.3.0: {}
 
   execa@5.1.1:
     dependencies:

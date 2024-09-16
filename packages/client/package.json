@@ -57,6 +57,17 @@
       "require": "./dist/reexports/pjs-signer.js",
       "default": "./dist/reexports/pjs-signer.js"
     },
+    "./ledger-signer": {
+      "node": {
+        "import": "./dist/esm/reexports/ledger-signer.mjs",
+        "require": "./dist/reexports/ledger-signer.js",
+        "default": "./dist/reexports/ledger-signer.js"
+      },
+      "module": "./dist/esm/reexports/ledger-signer.mjs",
+      "import": "./dist/esm/reexports/ledger-signer.mjs",
+      "require": "./dist/reexports/ledger-signer.js",
+      "default": "./dist/reexports/ledger-signer.js"
+    },
     "./signer": {
       "node": {
         "import": "./dist/esm/reexports/signer.mjs",
@@ -420,6 +431,7 @@
     "logs-provider",
     "polkadot-sdk-compat",
     "pjs-signer",
+    "ledger-signer",
     "signer",
     "sm-provider",
     "ws-provider",
@@ -441,6 +453,7 @@
   "dependencies": {
     "@polkadot-api/cli": "workspace:*",
     "@polkadot-api/json-rpc-provider": "workspace:*",
+    "@polkadot-api/ledger-signer": "workspace:*",
     "@polkadot-api/logs-provider": "workspace:*",
     "@polkadot-api/polkadot-sdk-compat": "workspace:*",
     "@polkadot-api/metadata-builders": "workspace:*",
